@@ -8,7 +8,7 @@
 
 // load data using promises
 let promises = [
-    d3.json("https://")
+    d3.csv("")
 ];
 
 Promise.all(promises)
@@ -23,7 +23,7 @@ Promise.all(promises)
 function initMainPage(dataArray) {
 
     // log data
-    console.log('check out the data', dataArray);
+    console.log('check out the data', dataArray[0]);
 
     // TODO: init visualizations
 }

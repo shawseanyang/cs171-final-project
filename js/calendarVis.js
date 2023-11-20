@@ -29,7 +29,7 @@ class CalendarVis {
 
     // Text that tooltips should show given a data point
     tooltipText(d) {
-        return `$${d[1].toFixed(2)} average on ${d[0].toLocaleDateString()}`;
+        return `$${d[1].toFixed(2)} on average on ${d[0].toLocaleDateString()}`;
     }
 
     // Return the cheapest week of the month ie. "1st week of May"

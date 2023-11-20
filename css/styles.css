@@ -1,0 +1,14 @@
+.theme-color {
+  color: #E26D5A;
+  fill: #E26D5A;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 12px;
+  pointer-events: none;
+}

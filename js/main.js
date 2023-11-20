@@ -4,6 +4,7 @@
 
 // init global variables
 let vis3;
+let vis4;
 
 // application state
 let APPLICATION_STATE = {
@@ -34,5 +35,10 @@ function initMainPage(dataArray) {
         // update title with cheapest week
         d3.select('#vis3-title')
             .text(`Fly on the ${vis.getCheapestWeek()}!`);
+    });
+    vis4 = new RateVis('vis4', dataArray[0], (vis) => {
+        // update title with cheapest week
+        d3.select('#vis4-title')
+            .text(`On a vacation? Consider flying to ${vis.findBestValueDestination()}!`);
     });
 }

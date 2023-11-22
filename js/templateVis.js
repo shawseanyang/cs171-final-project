@@ -10,7 +10,7 @@ class Vis {
         this.data = data;
 
         // parse date method
-        this.parseDate = d3.timeParse("%m/%d/%Y");
+        this.parseDate = d3.timeParse("%Y-%m-%d");
 
         this.initVis();
     }

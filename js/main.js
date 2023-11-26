@@ -75,4 +75,9 @@ function initMainPage(dataArray) {
         d3.select('#vis4-title')
             .text(`On a vacation? Consider flying to ${vis.findBestValueDestination()}!`);
     });
+    vis6 = new LayoverVis('vis6', dataArray[0], (vis) => {
+        // update title with cheapest week
+        d3.select('#vis6-title')
+            .text(`Fly ${vis.getLayoverDecision()}!`);
+    });
 }

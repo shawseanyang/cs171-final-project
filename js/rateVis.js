@@ -71,11 +71,10 @@ class RateVis {
     initVis(){
         let vis = this;
 
-        vis.margin = {top: 20, right: 20, bottom: 20, left: 40};
+        vis.margin = {top: 20, right: 20, bottom: 20, left: 20};
         vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
         vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.top - vis.margin.bottom;
-        console.log("width", vis.width);
-        console.log("height", vis.height);
+
         // init drawing area
         vis.svg = d3.select("#" + vis.parentElement).append("svg")
             .attr("width", vis.width + vis.margin.left + vis.margin.right)
@@ -143,7 +142,6 @@ class RateVis {
                 if (ratio > highestRatio) {
                     highestRatio = ratio;
                     bestValueDestination = nonstopFlight ? nonstopFlight.destinationAirport : null;
-                    console.log("changed best value destination to", bestValueDestination);
                 }
     
                 return {
@@ -155,9 +153,6 @@ class RateVis {
         );
     
         vis.displayData = Array.from(processedData, ([destination, values]) => ({ destination, ...values }));
-        
-        // Log displayData to the console
-        console.log("Display Data:", vis.displayData);
     
         // Store the best value destination in the instance for later use
         vis.bestValueDestination = bestValueDestination;

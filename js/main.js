@@ -3,12 +3,13 @@
 * * * * * * * * * * * * * */
 
 // init global variables
+let vis1;
 let vis3;
 let vis4;
 
 // application state
 let APPLICATION_STATE = {
-    selectedCity: 'ORD'
+    selectedCity: ''
 }
 
 // load data using promises
@@ -24,11 +25,39 @@ Promise.all(promises)
         console.log(err)
     });
 
+function updateSelectedCity(city) {
+    APPLICATION_STATE.selectedCity = city;
+    vis1.wrangleData();
+    vis3.wrangleData();
+    vis4.wrangleData();
+}
+
 // initMainPage
 function initMainPage(dataArray) {
 
     // log data
     console.log('check out the data', dataArray[0]);
+
+    // Grab the set of cities
+    let cities = new Set(dataArray[0].map(d => d.destinationAirport));
+
+    // Remove the empty string
+    cities.delete("");
+
+    // Use the first city by default
+    APPLICATION_STATE.selectedCity = cities.values().next().value;
+
+    // Add the cities to the select menu
+    let cityDropdown = d3.select("#city-select");
+    cityDropdown.selectAll("option")
+        .data(cities)
+        .join("option")
+        .attr("value", d => d)
+        .attr("selected", d => d === APPLICATION_STATE.selectedCity ? "true" : null)
+        .text(d => d);
+    cityDropdown.on("change", function() {
+        updateSelectedCity(this.value);
+    });
 
     // init visualizations
     vis1 = new DaysPriorPriceVis('vis1', dataArray[0], (vis) => {

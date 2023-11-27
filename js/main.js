@@ -4,6 +4,7 @@
 
 // init global variables
 let vis1;
+let vis2; 
 let vis3;
 let vis4;
 
@@ -28,6 +29,7 @@ Promise.all(promises)
 function updateSelectedCity(city) {
     APPLICATION_STATE.selectedCity = city;
     vis1.wrangleData();
+    vis2.wrangleData();
     vis3.wrangleData();
     vis4.wrangleData();
 }
@@ -64,6 +66,10 @@ function initMainPage(dataArray) {
       // update title with the cheapest day to buy
       d3.select('#vis1-title')
         .text(`Buy your ticket ${vis.getCheapestDayToBuy()} days before your flight!`);
+    });
+    vis2 = new AirlineCostVis('vis2', dataArray[0], (vis) => {
+        d3.select('#vis2-title')
+            .text(`Fly with ${vis.getCheapestAirline()}!`);
     });
     vis3 = new CalendarVis('vis3', dataArray[0], (vis) => {
         // update title with cheapest week

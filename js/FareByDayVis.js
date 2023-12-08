@@ -4,6 +4,7 @@ class FareByDayVis {
         this.parentElement = parentElement;
         this.data = data;
         this.parseDate = d3.timeParse("%Y-%m-%d");
+        this.dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         this.initVis();
     }
 
@@ -18,7 +19,7 @@ class FareByDayVis {
     initVis() {
         let vis = this;
 
-        vis.margin = { top: 10, right: 15, bottom: 40, left: 35 };
+        vis.margin = { top: 10, right: 15, bottom: 25, left: 35 }; // Increase the bottom margin as needed
         vis.width = 960 - vis.margin.left - vis.margin.right;
         vis.height = 120 - vis.margin.top - vis.margin.bottom;
 
@@ -40,7 +41,23 @@ class FareByDayVis {
         vis.svg.append("g")
             .attr("class", "y-axis axis")
             .call(vis.yAxis);
+                // Create a tooltip for hover-over information
+        vis.tooltip = d3.select("body").append("div") 
+            .attr("class", "tooltip")             
+            .style("opacity", 0)
+            .style("position", "absolute")
+            .style("text-align", "center")
+            .style("width", "120px")
+            .style("height", "28px")
+            .style("padding", "2px")
+            .style("font", "12px sans-serif")
+            .style("background", "lightsteelblue")
+            .style("border", "0px")
+            .style("border-radius", "8px")
+            .style("pointer-events", "none");
 
+        vis.colorScale = d3.scaleSequential()
+            .interpolator(d3.interpolateRdYlGn);
         // Initialize data processing
         this.wrangleData();
     }
@@ -70,12 +87,12 @@ class FareByDayVis {
             }
         });
         vis.filteredData = vis.filteredData.filter(d => d.segmentsAirlineName !== null);
-    
+        
     
 
         // Group data by day and airline
         vis.averageFares = d3.rollups(vis.filteredData, 
-            v => d3.mean(v, d => d.totalFare), 
+            v => d3.mean(v, d => d.totalFare).toFixed(2), 
             d => d.weekday, 
             d => d.segmentsAirlineName
         );
@@ -83,6 +100,11 @@ class FareByDayVis {
         // Find the day with the lowest average fare
         vis.minAverageFare = d3.min(vis.averageFares, d => d3.min(d[1], a => a[1]));
 
+        const minFare = d3.min(vis.filteredData, d => d.totalFare);
+        const maxFare = d3.max(vis.filteredData, d => d.totalFare);
+        vis.colorScale.domain([maxFare, minFare]); // Reverse domain for red to green
+    
+    
         this.updateVis();
     }
 
@@ -113,8 +135,6 @@ class FareByDayVis {
                     .attr("y2", vis.height)
                     .attr("stroke", "black");
             });
-
-            // Draw circles for average fare of each airline
             svg.selectAll(".dot")
                 .data(airlineFares)
                 .enter()
@@ -122,16 +142,40 @@ class FareByDayVis {
                 .attr("class", "dot")
                 .attr("cx", d => vis.x(d[0]))
                 .attr("cy", d => vis.y(d[1]))
-                .attr("r", 4);
+                .attr("r", 4)
+                .style("fill", d => vis.colorScale(d[1]))
+                .on("mouseover", function(event, d) {
+                    vis.tooltip.transition()        
+                        .duration(200)      
+                        .style("opacity", .9);      
+                    vis.tooltip.html(d[0] + "<br/>" + "$" + d[1])  
+                        .style("left", (event.pageX) + "px")     
+                        .style("top", (event.pageY - 28) + "px");
+                })                  
+                .on("mouseout", function(d) {       
+                    vis.tooltip.transition()        
+                        .duration(500)      
+                        .style("opacity", 0);   
+                });
+            
+            svg.append("text")
+                .attr("x", (vis.width / 7 - vis.margin.left - vis.margin.right) / 2)
+                .attr("y", vis.height + vis.margin.top + 10) // Adjust this value to position the labels correctly
+                .attr("text-anchor", "middle")
+                .attr("font-size", "10px")
+                .attr("font-weight", "bold")
+                .text(vis.dayNames[weekday]);
+    
 
             // Highlight the day with the lowest average fare
             if (dayData && d3.min(airlineFares, d => d[1]) === vis.minAverageFare) {
                 svg.append("rect")
                     .attr("width", vis.width / 7 - vis.margin.left - vis.margin.right)
                     .attr("height", vis.height)
-                    .attr("fill", "yellow")
+                    .attr("fill", "Aquamarine")
                     .lower();
             }
+
         });
     }
 }

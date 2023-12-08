@@ -8,6 +8,7 @@ let vis2;
 let vis3;
 let vis4;
 let vis5;
+let vis6;
 
 // application state
 let APPLICATION_STATE = {
@@ -29,11 +30,12 @@ Promise.all(promises)
 
 function updateSelectedCity(city) {
     APPLICATION_STATE.selectedCity = city;
-    // vis1.wrangleData();
-    // vis2.wrangleData();
-    // vis3.wrangleData();
-    // vis4.wrangleData();
+    vis1.wrangleData();
+    vis2.wrangleData();
+    vis3.wrangleData();
+    vis4.wrangleData();
     vis5.wrangleData();
+    vis6.wrangleData();
 }
 
 // initMainPage
@@ -64,7 +66,6 @@ function initMainPage(dataArray) {
     });
 
     // init visualizations
-    vis5 = new FareByDayVis('vis5', dataArray[0]);
     vis1 = new DaysPriorPriceVis('vis1', dataArray[0], (vis) => {
       // update title with the cheapest day to buy
       d3.select('#vis1-title')
@@ -84,6 +85,7 @@ function initMainPage(dataArray) {
         d3.select('#vis4-title')
             .text(`On a vacation? Consider flying to ${vis.findBestValueDestination()}!`);
     });
+    vis5 = new FareByDayVis('vis5', dataArray[0]);
     vis6 = new LayoverVis('vis6', dataArray[0], (vis) => {
         // update title with cheapest week
         d3.select('#vis6-title')

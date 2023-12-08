@@ -130,32 +130,40 @@ class RateVis {
             (v) => {
                 // Find a nonstop flight for each destination
                 const nonstopFlight = v.find(f => f.isNonStop);
-                const nonstopDistance = nonstopFlight ? nonstopFlight.totalTravelDistance : 3113;
+                if (nonstopFlight) {
+                    const nonstopDistance = nonstopFlight.totalTravelDistance;
     
-                // Calculate the average fare for each destination
-                const averageFare = d3.mean(v, f => f.totalFare);
+                    // Calculate the average fare for each destination
+                    const averageFare = d3.mean(v, f => f.totalFare);
+        
+                    // Calculate the ratio of distance to fare
+                    const ratio = nonstopDistance / averageFare;
+        
+                    // Update the best value destination if this ratio is higher
+                    if (ratio > highestRatio) {
+                        highestRatio = ratio;
+                        bestValueDestination = nonstopFlight.destinationAirport;
+                    }
     
-                // Calculate the ratio of distance to fare
-                const ratio = nonstopDistance / averageFare;
-    
-                // Update the best value destination if this ratio is higher
-                if (ratio > highestRatio) {
-                    highestRatio = ratio;
-                    bestValueDestination = nonstopFlight ? nonstopFlight.destinationAirport : null;
+                    return {
+                        totalTravelDistance: nonstopDistance,
+                        averageFare: averageFare
+                    };
                 }
-    
-                return {
-                    totalTravelDistance: nonstopDistance,
-                    averageFare: averageFare
-                };
+                // Return undefined if there is no nonstop flight
+                return undefined;
             },
             d => d.destinationAirport // Grouping key is now only destination
         );
     
-        vis.displayData = Array.from(processedData, ([destination, values]) => ({ destination, ...values }));
+        // Filter out entries where the value is undefined (i.e., no nonstop flights)
+        vis.displayData = Array.from(processedData, ([destination, values]) => ({ destination, ...values }))
+                            .filter(d => d.totalTravelDistance !== undefined);
+        console.log(vis.displayData);
     
         // Store the best value destination in the instance for later use
         vis.bestValueDestination = bestValueDestination;
+        console.log(vis.bestValueDestination);
     
         vis.updateVis();
     }
@@ -165,7 +173,7 @@ class RateVis {
     
         // Update scales
         vis.x.domain([0, d3.max(vis.displayData, d => d.averageFare)]);
-        vis.y.domain([0, d3.max(vis.displayData, d => d.totalTravelDistance + 500)]);
+        vis.y.domain([0, d3.max(vis.displayData, d => d.totalTravelDistance)]);
     
         // Update axes
         vis.svg.select(".x-axis").call(vis.xAxis);
@@ -220,7 +228,7 @@ class RateVis {
 
         // Draw regression line
         const lineGenerator = vis.createLineGenerator();
-        const lineData = [{ averageFare: d3.min(vis.displayData, d => d.averageFare) }, { averageFare: d3.max(vis.displayData, d => d.averageFare) }];
+        const lineData = [{ averageFare: d3.min(vis.displayData, d => d.averageFare)}, { averageFare: d3.max(vis.displayData, d => d.averageFare)}];
         
         vis.svg.append("path")
             .datum(lineData)

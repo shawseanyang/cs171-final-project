@@ -24,7 +24,7 @@ class DaysPriorPriceVis {
 
         vis.margin = {top: 20, right: 50, bottom: 50, left: 20};
         vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
-        vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.top - vis.margin.bottom;
+        vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().width * 0.6 - vis.margin.top - vis.margin.bottom;
 
         // init drawing area
         vis.svg = d3.select("#" + vis.parentElement).append("svg")
@@ -118,7 +118,7 @@ class DaysPriorPriceVis {
 
         // Update scales
         vis.x.domain([0, d3.max(vis.averagePriceByDaysPrior, d => d[0])]);
-        vis.y.domain([0, d3.max(vis.averagePriceByDaysPrior, d => d[1])]);
+        vis.y.domain([d3.min(vis.averagePriceByDaysPrior, d => d[1]) - 20, d3.max(vis.averagePriceByDaysPrior, d => d[1]) + 20]);
         vis.colorScale.domain([d3.max(vis.averagePriceByDaysPrior, d => d[1]), 0]);
 
         // Update axes

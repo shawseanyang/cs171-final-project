@@ -1,6 +1,6 @@
 .theme-color {
-  color: #E26D5A;
-  fill: #E26D5A;
+  color: #444444;
+  fill: #444444;
 }
 
 .tooltip {
@@ -20,7 +20,7 @@
 
 .axis line,
 .axis path {
-    stroke: #ddd;
+    stroke: #ffffff;
     stroke-width: 1px;
     shape-rendering: crispEdges;
 }
@@ -44,5 +44,38 @@
     transition: opacity 0.3s;
 }
 
-/* Add any additional styles for text, colors, etc. */
+/* Loader Styling */
+#loader-wrapper {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: white;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease-out;
+  opacity: 1;
+}
 
+#loader {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  border: 4px solid #Fff;
+  animation: loader 2s infinite ease;
+}
+
+
+/* Add any additional styles for text, colors, etc. */
+.title-text{
+  font-size: 42px;
+  font-weight: bold;
+}
+
+.highlight-text{
+  color: #08ac4c;
+}

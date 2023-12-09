@@ -53,7 +53,7 @@ class CalendarVis {
         vis.margin = {top: 20, right: 0, bottom: 40, left: 0};
         vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
         // Same as width but apply the top and bottom margins.
-        vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.top - vis.margin.bottom;
+        vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().width * 0.85 - vis.margin.top - vis.margin.bottom;
 
         // Cell size is the width of the calendar divided by 7 days in a week
         vis.cellSize = vis.width / 7;

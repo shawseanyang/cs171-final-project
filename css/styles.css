@@ -12,3 +12,37 @@
   font-size: 12px;
   pointer-events: none;
 }
+
+
+.tooltip {   
+  opacity: 0;   
+}
+
+.axis line,
+.axis path {
+    stroke: #ddd;
+    stroke-width: 1px;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-size: 10px;
+    font-family: 'Open Sans', sans-serif;
+    color: #444;
+}
+
+.dot {
+    transition: fill 0.3s, r 0.3s;
+}
+
+.dot:hover {
+    fill: #ff7f0e; /* highlight color */
+    r: 6; /* larger radius on hover */
+}
+
+.tooltip {
+    transition: opacity 0.3s;
+}
+
+/* Add any additional styles for text, colors, etc. */
+

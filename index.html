@@ -6,6 +6,9 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.4.0/nouislider.css" integrity="sha512-DGB74Gyw93qON+V0QxSRs1er6sqoPyFoy23HBL5LN7MRJBcjeCU22zega+vOEGE0XQLoVrv4ExcaesSTwZQA2w==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link href="nouislider.css" rel="stylesheet">
+
     <link rel="stylesheet" href="css/styles.css">
 
 </head>
@@ -89,6 +92,28 @@
 		</div>
     <div class = "row">
 			<div class="col-md-12">
+        <h3 id="vis7-title" class="theme-color">So where are you gonna go?</h3>
+        <div class = "row">
+          <div class="col-md-6">
+            <h5>Date of Flight:</h4>
+          </div>
+          <div class="col-md-6">
+            <h5>Budget:</h4>
+          </div>
+        </div>
+        <div class = "row">
+          <div class="col-md-6">
+            <div id="date-slider" class="slider"></div>
+          </div>
+          <div class="col-md-6">
+            <div id="budget-slider" class="slider"></div>
+          </div>
+        </div>
+        <div id="vis7"></div>
+      </div>
+    </div>
+    <div class = "row">
+			<div class="col-md-12">
         <div class="align-self-center full" id="ending"></div>
       </div>
 		</div>
@@ -113,6 +138,12 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+<!-- NOUISLIDER -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.4.0/nouislider.min.js"
+        integrity="sha512-mZXUH8DAODwCHioWP3gltQwa953LbABMlzTYwYkKqv8eNxOk37B1HgNNuCMfFxgrpW5C34WJbxPDcM58+s1dJA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="nouislider.js"></script>
+
 <!-- d3 -->
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://d3js.org/d3-array.v2.min.js"></script>
@@ -124,6 +155,7 @@
 <script src="js/daysPriorPriceVis.js"></script>
 <script src="js/rateVis.js"></script>
 <script src="js/layoverVis.js"></script>
+<script src="js/budgetMapVis.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

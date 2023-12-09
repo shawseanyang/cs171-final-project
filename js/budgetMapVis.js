@@ -286,9 +286,6 @@ class BudgetMapVis {
         // Remove the empty string
         vis.cities.delete("");
 
-        // Convert all dates to Date objects
-        vis.data.forEach(d => d.flightDate = vis.parseDate(d.flightDate));
-
         vis.filterData();
     }
 

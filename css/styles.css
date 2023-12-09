@@ -12,3 +12,13 @@
   font-size: 12px;
   pointer-events: none;
 }
+
+.slider {
+  margin-top: 50px;
+  margin-bottom:20px;
+  width: 80%;
+}
+
+.noUi-connect {
+  background: gray;
+}

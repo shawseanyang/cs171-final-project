@@ -16,6 +16,7 @@ let APPLICATION_STATE = {
 // load data using promises
 let promises = [
     d3.csv("data/onlyMay.csv"),
+    d3.csv("data/airports.csv")
 ];
 
 Promise.all(promises)
@@ -60,21 +61,6 @@ function initMainPage(dataArray) {
     cityDropdown.on("change", function() {
         updateSelectedCity(this.value);
     });
-    
-    let dateRange = d3.extent(dataArray[0].map(d => d.flightDate));
-    let budget = 200;
-
-    // For each city, calculate the average fare over the date range to fly there from BOS
-    let citiesWithinBudget = {};
-    cities.forEach(city => {
-        let cityData = dataArray[0].filter(d => d.destinationAirport === city);
-        let dateRangeData = cityData.filter(d => d.flightDate >= dateRange[0] && d.flightDate <= dateRange[1]);
-        let average = d3.mean(dateRangeData.map(d => d.totalFare));
-        if (average < budget) {
-            citiesWithinBudget[city] = average;
-        }
-    });
-    console.log(citiesWithinBudget);
 
     // init visualizations
     vis1 = new DaysPriorPriceVis('vis1', dataArray[0], (vis) => {
@@ -101,4 +87,5 @@ function initMainPage(dataArray) {
         d3.select('#vis6-title')
             .text(`Fly ${vis.getLayoverDecision()}!`);
     });
+    vis7 = new BudgetMapVis('vis7', dataArray[0], dataArray[1]);
 }

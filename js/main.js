@@ -18,6 +18,7 @@ let APPLICATION_STATE = {
 // load data using promises
 let promises = [
     d3.csv("data/onlyMay.csv"),
+    d3.csv("data/airports.csv")
 ];
 
 Promise.all(promises)
@@ -91,4 +92,5 @@ function initMainPage(dataArray) {
         d3.select('#vis6-title')
             .text(`Fly ${vis.getLayoverDecision()}!`);
     });
+    vis7 = new BudgetMapVis('vis7', dataArray[0], dataArray[1]);
 }

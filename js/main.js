@@ -31,12 +31,15 @@ Promise.all(promises)
 
 function updateSelectedCity(city) {
     APPLICATION_STATE.selectedCity = city;
-    vis1.wrangleData();
-    vis2.wrangleData();
-    vis3.wrangleData();
-    vis4.wrangleData();
-    vis5.wrangleData();
-    vis6.wrangleData();
+    console.log("logging in mainjs", APPLICATION_STATE.selectedCity);
+    if (vis1 && vis2 && vis3 && vis4 && vis5 && vis6) {
+        vis1.wrangleData();
+        vis2.wrangleData();
+        vis3.wrangleData();
+        vis4.wrangleData();
+        vis5.wrangleData();
+        vis6.wrangleData();
+    }
 }
 
 // Initialize the Intersection Observer
@@ -67,10 +70,7 @@ function initMainPage(dataArray) {
     // Remove the empty string
     cities.delete("");
 
-    // Use the first city by default
-    APPLICATION_STATE.selectedCity = cities.values().next().value;
-
-    initDropdown(cities);
+    initDropdown(cities, updateSelectedCity);
 
     initVis(dataArray);
 
@@ -78,7 +78,6 @@ function initMainPage(dataArray) {
 
 }
 
-// Add the cities to the select menu
 function initDropdown(cities) {
     let cityDropdownMenu = d3.select("#city-select .menu");
 
@@ -89,45 +88,50 @@ function initDropdown(cities) {
         .attr("data-value", d => d)
         .text(d => d);
 
-        $('#city-select').dropdown({
-            onChange: function(value) {
-                // Update the APPLICATION_STATE
-                updateSelectedCity(value);
-                console.log(value);
-                // Update the dropdown display value
-                document.getElementById('dropdown-display').textContent = value;
-            }
+    $('#city-select').dropdown({
+        onChange: function(value) {
+            // Update the APPLICATION_STATE
+            updateSelectedCity(value);
+            // Update the dropdown display value
+            document.getElementById('dropdown-display').textContent = value;
+        }
     });
+
+    // Set the default value to ATL
+    $('#city-select').dropdown('set selected', 'ATL');
 }
 
 // Initializes visualizations
 function initVis(dataArray){
+    vis4 = new RateVis('vis4', dataArray[0], (vis) => {
+        // Update title with cheapest destination
+        d3.select('#vis4-title')
+            .text(`${vis.getTitle()}`);
+        d3.select('#vis4-text')
+            .text('The cost per mile for '
+            )
+    });
     vis1 = new DaysPriorPriceVis('vis1', dataArray[0], (vis) => {
         // Update title with the cheapest day to buy
         d3.select('#vis1-title')
-          .text(`Buy your ticket ${vis.getCheapestDayToBuy()} days before your flight!`);
-      });
-      vis2 = new AirlineCostVis('vis2', dataArray[0], (vis) => {
-          d3.select('#vis2-title')
-              .text(`Fly with ${vis.getCheapestAirline()}!`);
-      });
-      vis3 = new CalendarVis('vis3', dataArray[0], (vis) => {
-          // Update title with cheapest week
-          d3.select('#vis3-title')
-              .text(`Fly on the ${vis.getCheapestWeek()}!`);
-      });
-      vis4 = new RateVis('vis4', dataArray[0], (vis) => {
-          // Update title with cheapest destination
-          d3.select('#vis4-title')
-              .text(`On a vacation? Consider flying to ${vis.findBestValueDestination()}!`);
-      });
-      vis5 = new FareByDayVis('vis5', dataArray[0]);
-      vis6 = new LayoverVis('vis6', dataArray[0], (vis) => {
-          // Update title with layover suggestion
-          d3.select('#vis6-title')
-              .text(`Fly ${vis.getLayoverDecision()}!`);
-      });
-      vis7 = new BudgetMapVis('vis7', dataArray[0], dataArray[1]);
+            .text(`Buy your ticket ${vis.getCheapestDayToBuy()} days before your flight!`);
+    });
+    vis2 = new AirlineCostVis('vis2', dataArray[0], (vis) => {
+        d3.select('#vis2-title')
+            .text(`Fly with ${vis.getCheapestAirline()}!`);
+    });
+    vis3 = new CalendarVis('vis3', dataArray[0], (vis) => {
+        // Update title with cheapest week
+        d3.select('#vis3-title')
+            .text(`Fly on the ${vis.getCheapestWeek()}!`);
+    });
+    vis5 = new FareByDayVis('vis5', dataArray[0]);
+    vis6 = new LayoverVis('vis6', dataArray[0], (vis) => {
+        // Update title with layover suggestion
+        d3.select('#vis6-title')
+            .text(`Fly ${vis.getLayoverDecision()}!`);
+    });
+    vis7 = new BudgetMapVis('vis7', dataArray[0], dataArray[1]);
 }
 
 function hideLoadingScreen() {

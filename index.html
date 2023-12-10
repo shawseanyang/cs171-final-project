@@ -24,9 +24,9 @@
 		<div class = "row">
 			<div class="col-md-12">
         <div class="align-self-center" id="title">
-          <span class = "theme-color title-text"> I'm a student flying from BOS to </span>
+          <span class = "theme-color title-text"> Summer break is coming up! I'm flying from BOS to </span>
           <div class="ui inline dropdown" id="city-select">
-            <span class="title-text highlight-text" id = "dropdown-display">choose here</span>
+            <span class="title-text highlight-text" id = "dropdown-display"></span>
             <i class="dropdown icon"></i>
             <div class="menu"></div>
           </div>
@@ -49,17 +49,30 @@
       </div>
 		</div>
     <div class = "row">
+			<div class="col-md-8">
+        <div class="align-self-center full" id="trick3">
+          <div id="vis4"></div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="align-self-center full" id="trick3">
+          <h3 id="vis4-title" class="theme-color"></h3>
+          <span id="vis4-text"></span>
+        </div>
+      </div>
+		</div>
+    <div class = "row">
 			<div class="col-md-12">
         <div class="align-self-center full" id="trick1"></div>
-        <h3 id="vis1-title" class="theme-color vis-hidden tran"></h3>
-        <div id="vis1" class = "vis-hidden tran"></div>
+        <h3 id="vis1-title" class="theme-color"></h3>
+        <div id="vis1"></div>
       </div>
 		</div>
     <div class = "row">
       <div class="col-md-12">
         <div class="align-self-center full" id="trick1">
-        <h3 id="vis2-title" class="theme-color vis-hidden tran"></h3>
-          <div id="vis2" class="vis-hidden tran"></div> 
+        <h3 id="vis2-title" class="theme-color"></h3>
+          <div id="vis2"></div> 
         </div>
       </div>
     </div>
@@ -71,24 +84,16 @@
     <div class = "row">
 			<div class="col-md-12">
         <div class="align-self-center full" id="trick2b">
-          <h3 id="vis3-title" class="theme-color vis-hidden tran"></h3>
-          <div id="vis3" class="vis-hidden tran"></div>
-        </div>
-      </div>
-		</div>
-    <div class = "row">
-			<div class="col-md-12">
-        <div class="align-self-center full" id="trick3">
-          <h3 id="vis4-title" class="theme-color vis-hidden tran"></h3>
-          <div id="vis4" class="vis-hidden tran"></div>
+          <h3 id="vis3-title" class="theme-color"></h3>
+          <div id="vis3"></div>
         </div>
       </div>
 		</div>
     <div class = "row">
 			<div class="col-md-12">
         <div class="align-self-center full" id="trick4"></div>
-        <h3 id="vis6-title" class="theme-color vis-hidden tran"></h3>
-        <div id="vis6" class="vis-hidden tran"></div>
+        <h3 id="vis6-title" class="theme-color"></h3>
+        <div id="vis6"></div>
       </div>
 		</div>
     <div class = "row">
@@ -153,6 +158,7 @@
 <script src="https://d3js.org/d3-array.v2.min.js"></script>
 
 <!-- OWN JS -->
+<script src="js/dropdown.js"></script>
 <script src="js/calendarVis.js"></script>
 <script src="js/AirlineCostVis.js"></script>
 <script src="js/FareByDayVis.js"></script>

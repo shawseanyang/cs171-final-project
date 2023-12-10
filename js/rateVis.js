@@ -19,7 +19,15 @@ class RateVis {
         this.initVis();
     }
 
-    findBestValueDestination() {
+    getTitle() {
+        return this.msg;
+    }
+
+    getVisFourText() {
+        text = "The average cost per mile for " + APPLICATION_STATE.selectedCity + " is $" + this.applicationStateTopPercentage.toFixed(2) + " per mile. "
+    }
+
+    getBestValueDestination() {
         return this.bestValueDestination;
     }
 
@@ -100,8 +108,6 @@ class RateVis {
         // Add Y-axis group
         vis.svg.append("g")
             .attr("class", "y-axis axis");
-
-
             
         // init tooltip with a rounded white background
         vis.tooltip = d3.select("body").append("div")
@@ -147,7 +153,8 @@ class RateVis {
     
                     return {
                         totalTravelDistance: nonstopDistance,
-                        averageFare: averageFare
+                        averageFare: averageFare,
+                        ratio: ratio
                     };
                 }
                 // Return undefined if there is no nonstop flight
@@ -159,10 +166,36 @@ class RateVis {
         // Filter out entries where the value is undefined (i.e., no nonstop flights)
         vis.displayData = Array.from(processedData, ([destination, values]) => ({ destination, ...values }))
                             .filter(d => d.totalTravelDistance !== undefined);
-        console.log(vis.displayData);
     
-        // Store the best value destination in the instance for later use
+        // Determine the ratio for the destination city from APPLICATION_STATE
+        console.log(APPLICATION_STATE.selectedCity, "calculating ratio")
+        let applicationStateRatio = vis.displayData.find(d => d.destination === APPLICATION_STATE.selectedCity)?.ratio;
+    
+        // Calculate the percentage of ratios that are lower than the applicationStateRatio
+        let countLowerRatios = vis.displayData.filter(d => d.ratio < applicationStateRatio).length;
+        let percentage = 100 - (countLowerRatios / vis.displayData.length) * 100;
+        let preposition = "top"
+        let message = "Good choice!"
+        if (percentage < 33){
+            message = "Great choice!"
+        }
+        else if (percentage < 66){
+            message = "Solid choice."
+        }
+        else if (percentage < 100){
+            message = "Yikes!"
+            preposition = "bottom";
+            percentage = 100 - percentage;
+        }
+    
+        // Logging results
+        vis.msg = `${message} ${APPLICATION_STATE.selectedCity} is in the ${preposition} ${(100 - percentage).toFixed(2)}% of destinations in terms of cost per mile!`;
+
+        // Store the best value destination and the percentage in the instance for later use
         vis.bestValueDestination = bestValueDestination;
+        vis.applicationStateTopPercentage = 100 - percentage;
+        
+        console.log(vis.displayData);
         console.log(vis.bestValueDestination);
     
         vis.updateVis();

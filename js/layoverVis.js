@@ -22,6 +22,20 @@ class LayoverVis {
         return this.layoverDecision
     }
 
+    getCityWithMostSavings() {
+        return this.cityWithMostSavings;
+    }
+
+    getMostSavingsAmount() {
+        let msg = Number(this.mostSavingsAmount.toFixed(2));
+        return `\$${msg}`;
+    }
+
+    getBadCities() {
+        let data = this.badCities;
+        return data.join(", ");
+    }
+
     initVis(){
         let vis = this;
 
@@ -95,6 +109,17 @@ class LayoverVis {
         }))
         .sort((a, b) => b.moneySaved - a.moneySaved); // Sort from biggest to least moneySaved
 
+    // Save the city with the most savings and the amount of savings
+    if (vis.displayData.length > 0) {
+        vis.cityWithMostSavings = vis.displayData[0].destinationAirport;
+        vis.mostSavingsAmount = vis.displayData[0].moneySaved;
+    }
+
+    // Save cities where moneySaved < 0 to an array
+    vis.badCities = vis.displayData
+        .filter(d => d.moneySaved < 0)
+        .map(d => d.destinationAirport);
+
     // Find the money saved for APPLICATION_STATE.selectedCity
     const selectedCityData = vis.displayData.find(d => d.destinationAirport === APPLICATION_STATE.selectedCity);
 
@@ -133,28 +158,39 @@ class LayoverVis {
                 .style("text-anchor", "middle")
                 .text("Destination Airport");
         }
-    
-        // Update Y axis to include both positive and negative values
+
+        // Append x-axis label
+        if (xAxisGroup.selectAll(".axis-label.x").empty()) {
+            xAxisGroup.append("text")
+                .attr("class", "axis-label x")
+                .attr("x", vis.width / 2)
+                .attr("y", 40) // Adjust as needed
+                .style("text-anchor", "middle")
+                .text("Destination Airport");
+        }
+
+        // Update Y axis
         const yDomain = [
             d3.min(vis.displayData, d => d.moneySaved),
             d3.max(vis.displayData, d => d.moneySaved)
         ];
         vis.y.domain(yDomain).nice();
-
-        // Set up the y-axis with explicit ticks
         const yAxis = d3.axisLeft(vis.y)
             .ticks(5) // Adjust the number of ticks as needed
             .tickFormat(d3.format(".2s")); // Format the ticks (e.g., as shortened numbers)
 
-        vis.svg.select(".y-axis")
-            .call(yAxis)
-            .append("text")
-            .attr("class", "axis-label")
-            .attr("transform", "rotate(-90)") // Rotate the label for vertical axis
-            .attr("x", -vis.height / 2) // Center the label
-            .attr("y", -35) // Position to the left of the y-axis
-            .style("text-anchor", "middle")
-            .text("Average Money Saved Flying Nonstop");
+        const yAxisGroup = vis.svg.select(".y-axis").call(yAxis);
+
+        // Append y-axis label
+        if (yAxisGroup.selectAll(".axis-label.y").empty()) {
+            yAxisGroup.append("text")
+                .attr("class", "axis-label y")
+                .attr("transform", "rotate(-90)") // Rotate the label for vertical axis
+                .attr("x", -vis.height / 2) // Center the label
+                .attr("y", -40) // Position to the left of the y-axis
+                .style("text-anchor", "middle")
+                .text("Average Money Saved Flying Nonstop");
+        }
     
         // Define a function to create a triangle polygon
         const trianglePath = (d) => {

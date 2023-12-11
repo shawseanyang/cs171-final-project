@@ -30,6 +30,7 @@ Promise.all(promises)
     });
 
 function updateSelectedCity(city) {
+    showLoadingScreen();
     APPLICATION_STATE.selectedCity = city;
     console.log("logging in mainjs", APPLICATION_STATE.selectedCity);
     if (vis1 && vis2 && vis3 && vis4 && vis5 && vis6) {
@@ -40,23 +41,8 @@ function updateSelectedCity(city) {
         vis5.wrangleData();
         vis6.wrangleData();
     }
+    hideLoadingScreen();
 }
-
-// Initialize the Intersection Observer
-let observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.remove('vis-hidden');
-            entry.target.classList.add('vis-visible');
-            observer.unobserve(entry.target); // Stop observing this element after it's visible
-        }
-    });
-}, { threshold: 0.7 }); // Adjust the threshold as needed
-
-// Observe each visualization element
-document.querySelectorAll('.tran').forEach(vis => {
-    observer.observe(vis);
-});
 
 // initMainPage
 function initMainPage(dataArray) {
@@ -144,9 +130,22 @@ function initVis(dataArray){
         // Update title with layover suggestion
         d3.select('#vis6-title')
             .text(`Fly ${vis.getLayoverDecision()}!`);
+        d3.select('#vis6-bad-cities')
+            .text(`${vis.getBadCities()}`);
+        d3.select('#vis6-best-city')
+            .text(`${vis.getCityWithMostSavings()}`)
+        d3.select('#vis6-best-savings')
+            .text(`${vis.getMostSavingsAmount()}`)
     });
     vis7 = new BudgetMapVis('vis7', dataArray[0], dataArray[1]);
 }
+
+function showLoadingScreen() {
+    const loadingScreen = document.getElementById('loader-wrapper');
+    loadingScreen.style.display = 'flex';
+    loadingScreen.style.opacity = '1';
+}
+
 
 function hideLoadingScreen() {
     const loadingScreen = document.getElementById('loader-wrapper');

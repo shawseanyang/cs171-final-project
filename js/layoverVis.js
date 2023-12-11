@@ -139,35 +139,20 @@ class LayoverVis {
         // Update X axis
         vis.x.domain(vis.displayData.map(d => d.destinationAirport));
         const xAxisGroup = vis.svg.select(".x-axis")
-            .attr("transform", `translate(0,${vis.height})`)
-            .call(d3.axisBottom(vis.x));
+        .call(d3.axisBottom(vis.x));
 
-        // Adjust x-axis labels if needed
-        xAxisGroup.selectAll("text")
-            .style("text-anchor", "end")
-            .attr("dx", "-.8em")
-            .attr("dy", ".15em")
-            .attr("transform", "rotate(-45)");
+        // Append or Update X-Axis Label
+        let xAxisLabel = vis.svg.selectAll(".axis-label.x").data([0]);
+        xAxisLabel.enter().append("text")
+            .merge(xAxisLabel) // Merge for updating
+            .attr("class", "axis-label x")
+            .attr("x", vis.width / 2)
+            .attr("y", vis.height + 30) // Adjust this value as needed
+            .style("text-anchor", "middle")
+            .text("Destination Airport");
 
         // Append x-axis label if not already appended
-        if (xAxisGroup.selectAll(".axis-label").empty()) {
-            xAxisGroup.append("text")
-                .attr("class", "axis-label")
-                .attr("x", vis.width / 2)
-                .attr("y", 30) // Adjust as needed
-                .style("text-anchor", "middle")
-                .text("Destination Airport");
-        }
-
-        // Append x-axis label
-        if (xAxisGroup.selectAll(".axis-label.x").empty()) {
-            xAxisGroup.append("text")
-                .attr("class", "axis-label x")
-                .attr("x", vis.width / 2)
-                .attr("y", 40) // Adjust as needed
-                .style("text-anchor", "middle")
-                .text("Destination Airport");
-        }
+     
 
         // Update Y axis
         const yDomain = [
@@ -179,18 +164,19 @@ class LayoverVis {
             .ticks(5) // Adjust the number of ticks as needed
             .tickFormat(d3.format(".2s")); // Format the ticks (e.g., as shortened numbers)
 
-        const yAxisGroup = vis.svg.select(".y-axis").call(yAxis);
+            const yAxisGroup = vis.svg.select(".y-axis").call(d3.axisLeft(vis.y));
 
-        // Append y-axis label
-        if (yAxisGroup.selectAll(".axis-label.y").empty()) {
-            yAxisGroup.append("text")
+            // Append or Update Y-Axis Label
+            let yAxisLabel = vis.svg.selectAll(".axis-label.y").data([0]);
+            yAxisLabel.enter().append("text")
+                .merge(yAxisLabel) // Merge for updating
                 .attr("class", "axis-label y")
-                .attr("transform", "rotate(-90)") // Rotate the label for vertical axis
-                .attr("x", -vis.height / 2) // Center the label
-                .attr("y", -40) // Position to the left of the y-axis
+                .attr("transform", "rotate(-90)") // Rotate label for Y Axis
+                .attr("x", -vis.height / 2)
+                .attr("y", -40) // Adjust this value as needed
                 .style("text-anchor", "middle")
                 .text("Average Money Saved Flying Nonstop");
-        }
+        
     
         // Define a function to create a triangle polygon
         const trianglePath = (d) => {

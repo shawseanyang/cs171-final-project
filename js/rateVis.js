@@ -156,7 +156,7 @@ class RateVis {
        
         let bestValueDestination = null;
         let highestRatio = 0;
-        let totalRatioSum = 0;  s
+        let totalRatioSum = 0; 
         let destinationsCount = 0; 
 
      

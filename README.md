@@ -6,9 +6,14 @@ This is Team Frequent Flyer's submission for the CS 171 final project. The proje
 
 ## Table of Contents
 
+- [Demo](#demo)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Dependencies](#dependencies)
+
+## Demo
+
+A demo of the project is available at https://frequentflyers.web.app/ and a video walkthrough is available at TODO.
 
 ## Installation
 

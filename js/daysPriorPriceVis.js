@@ -10,7 +10,14 @@ class DaysPriorPriceVis {
         this.callback = callback;
 
         // parse date method
-        this.parseDate = d3.timeParse("%Y-%m-%d");
+        this.parseDate = function(input) {
+          if (input instanceof Date) {
+            return input;
+          } else {
+            var parser = d3.timeParse("%Y-%m-%d");
+            return parser(input);
+          }
+        };
 
         this.initVis();
     }

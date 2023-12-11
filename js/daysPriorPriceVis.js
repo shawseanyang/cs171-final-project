@@ -27,6 +27,54 @@ class DaysPriorPriceVis {
         return `${msg} days`;
     }
 
+    createHistogram(averagePriceData, highlightedValue) {
+        // Extract only the average fare values for the histogram
+        const data = averagePriceData.map(d => d[1]);
+    
+        // Set dimensions for the histogram
+        const margin = { top: 10, right: 10, bottom: 20, left: 30 };
+        const width = 200 - margin.left - margin.right;
+        const height = 150 - margin.top - margin.bottom;
+    
+        // Create a temporary SVG to draw the histogram
+        let svgString = `<svg width="${width + margin.left + margin.right}" height="${height + margin.top + margin.bottom}"><g transform="translate(${margin.left},${margin.top})">`;
+    
+        // Set the ranges for the histogram
+        const x = d3.scaleLinear()
+            .domain([d3.min(data), d3.max(data)])
+            .range([0, width]);
+    
+        // Set the parameters for the histogram
+        const histogram = d3.histogram()
+            .value(d => d)
+            .domain(x.domain())
+            .thresholds(x.ticks(10));
+    
+        const bins = histogram(data);
+    
+        // Y axis: scale
+        const y = d3.scaleLinear()
+            .range([height, 0])
+            .domain([0, d3.max(bins, d => d.length)]);
+    
+        // Create bars
+        bins.forEach(bin => {
+            const xValue = x(bin.x0);
+            const yValue = y(bin.length);
+            const barHeight = height - yValue;
+            const barWidth = x(bin.x1) - x(bin.x0) - 1;
+            const fillColor = (highlightedValue >= bin.x0 && highlightedValue < bin.x1) ? 'red' : '#69b3a2';
+    
+            svgString += `<rect x="${xValue}" y="${yValue}" width="${barWidth}" height="${barHeight}" fill="${fillColor}"></rect>`;
+        });
+    
+        // Close the SVG string
+        svgString += '</g></svg>';
+    
+        return svgString;
+    }
+    
+    
     initVis(){
         let vis = this;
 
@@ -156,15 +204,18 @@ class DaysPriorPriceVis {
             .attr("stroke", "white")
             .raise()
             .on("mouseover", (event, d) => {
-                vis.tooltip.transition()
-                    .duration(200)
-                    .style("opacity", 0.9);
-                vis.tooltip.html(`Days Prior: ${d[0]}<br>Average Fare: ${
-                  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(d[1])
-                }`)
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 28) + "px");
-            })
+                const histogramSvgString = this.createHistogram(vis.averagePriceByDaysPrior, d[1]);
+                vis.tooltip.html(`
+                    <strong>Days Prior: ${d[0]}</strong><br>
+                    Average Fare: ${
+                      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(d[1])
+                    }<br>
+                    <strong>Histogram:</strong><br>${histogramSvgString}
+                `)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 28) + "px")
+                .style("opacity", 1);
+            })            
             .on("mouseout", () => {
                 vis.tooltip.transition()
                     .duration(500)

@@ -136,7 +136,10 @@ function initVis(dataArray){
         d3.select('#vis3-title')
             .text(`Fly on the ${vis.getCheapestWeek()}!`);
     });
-    vis5 = new FareByDayVis('vis5', dataArray[0]);
+    vis5 = new FareByDayVis('vis5', dataArray[0], (vis) => {
+        d3.select('#vis5-title')
+            .text("Which day is the best, based on my airline?");
+    });
     vis6 = new LayoverVis('vis6', dataArray[0], (vis) => {
         // Update title with layover suggestion
         d3.select('#vis6-title')

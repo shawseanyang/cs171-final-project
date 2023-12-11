@@ -1,8 +1,9 @@
 class FareByDayVis {
 
-    constructor(parentElement, data) {
+    constructor(parentElement, data, callback) {
         this.parentElement = parentElement;
         this.data = data;
+        this.callback = callback;
         this.parseDate = d3.timeParse("%Y-%m-%d");
         this.dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         this.initVis();
@@ -20,7 +21,9 @@ class FareByDayVis {
         let vis = this;
 
         vis.margin = { top: 10, right: 15, bottom: 25, left: 35 }; // Increase the bottom margin as needed
-        vis.width = 960 - vis.margin.left - vis.margin.right;
+        vis.totalWidth = d3.select("#" + vis.parentElement).node().getBoundingClientRect().width || window.innerWidth;
+        vis.width = vis.totalWidth - vis.margin.left - vis.margin.right;
+    
         vis.height = 120 - vis.margin.top - vis.margin.bottom;
 
         // Create SVG drawing area
@@ -177,5 +180,6 @@ class FareByDayVis {
             }
 
         });
+        vis.callback(vis);
     }
 }

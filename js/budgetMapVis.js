@@ -188,93 +188,6 @@ class BudgetMapVis {
         vis.setupDateSlider();
         vis.setupBudgetSlider();
 
-        // Force layout to position nodes
-        vis.simulation = d3.forceSimulation(vis.nodes)
-          .force('charge', d3.forceManyBody().strength(5))
-          .force('x', d3.forceX().x(d => vis.getProjectedCoordinates(d.iata)[0]))
-          .force('y', d3.forceY().y(d => vis.getProjectedCoordinates(d.iata)[1]))
-          .force('collision', d3.forceCollide().radius(d => vis.isBoston(d.iata) ? vis.BOSTON_SEPARATION : vis.MIN_SEPARATION))
-          // set a high alpha value to make sure the simulation converges on a relatively optimal layout
-          .alpha(2)
-          // increase alpha decay to converge faster
-          .alphaDecay(0.1)
-          .on('tick', ticked);
-
-          function ticked() {
-            // Update the position to respect margins
-            vis.nodes.forEach(d => {
-                const [x, y] = vis.boundedPosition(d.x, d.y);
-                d.rendered_x = x;
-                d.rendered_y = y;
-            });
-
-            // Draw an arc from Boston to each other airport
-            let arcs = vis.svg.selectAll("path.arc")
-              .data(vis.nodes.filter(d => !vis.isBoston(d.iata)), d => d.iata)
-              .join("path")
-              .attr("class", "arc")
-              .attr("d", d => {
-                const boston = vis.getBostonPositionInForceLayout();
-                const city = [d.rendered_x, d.rendered_y];
-                const dx = city[0] - boston[0];
-                const dy = city[1] - boston[1];
-                const dr = Math.sqrt(dx * dx + dy * dy);
-                const sweep = vis.isBoston(d.iata) ? 0 : 1;
-                return `M${boston[0]},${boston[1]}A${dr},${dr} 0 0,${sweep} ${city[0]},${city[1]}`;
-              })
-              .attr("fill", "none")
-              .attr("stroke", "lightgray")
-              .attr("stroke-width", 1);
-
-            // Create a group for each airport
-            let airportGroup = vis.svg.selectAll("g.airport")
-              .data(vis.nodes, d => d.iata)
-              .join("g")
-              .attr("class", "airport")
-              .attr("transform", d => `translate(${d.rendered_x}, ${d.rendered_y})`);
-            
-            // Add a circle for each airport
-            airportGroup.append("circle")
-                .attr("r", vis.NODE_SIZE)
-                .attr("fill", d => vis.isBoston(d.iata) ? "red" : "gray")
-                .attr("opacity", 0.5)
-                .on("mousemove", function(event, d) {
-                    // Move the tooltip
-                    const x = (event.pageX + 28);
-                    const y = (event.pageY - 28);
-                    vis.tooltip.style("opacity", .9);
-                    vis.tooltip.html(vis.tooltipText(d.iata))
-                        .style("left", x + "px")
-                        .style("top", y + "px");
-                    d3.select(this)
-                        .style("stroke", "black")
-                        .style("stroke-width", 2);
-                })
-                .on("mouseout", function(event, d) {
-                    // Hide the tooltip
-                    vis.tooltip.style("opacity", 0);
-                    // Remove highlight
-                    d3.select(this)
-                        .style("stroke", "none");
-                });
-            
-            // Add a name label for each airport
-            airportGroup.append("text")
-                .attr("x", 10)
-                .attr("y", 10)
-                .text(d => `${d.iata}`)
-                .attr("font-size", "10px")
-                .attr("fill", d => vis.isBoston(d.iata) ? "red" : "gray");
-            
-            // Add a fare label for each airport except for Boston
-            airportGroup.append("text")
-                .attr("x", 10)
-                .attr("y", 20)
-                .text(d => vis.isBoston(d.iata) ? '' : `$${vis.citiesWithinBudget[d.iata].toFixed(0)}`)
-                .attr("font-size", "10px")
-                .attr("fill", "gray");
-          }
-
         this.wrangleData();
     }
 
@@ -321,8 +234,88 @@ class BudgetMapVis {
             iata: "BOS",
         });
 
-        // Update the force layout
-        vis.simulation.nodes(vis.nodes);
-        vis.simulation.alpha(2).restart();
+        // Restart the force layout
+        vis.simulation = d3.forceSimulation(vis.nodes)
+          .force('charge', d3.forceManyBody().strength(5))
+          .force('x', d3.forceX().x(d => vis.getProjectedCoordinates(d.iata)[0]))
+          .force('y', d3.forceY().y(d => vis.getProjectedCoordinates(d.iata)[1]))
+          .force('collision', d3.forceCollide().radius(d => vis.isBoston(d.iata) ? vis.BOSTON_SEPARATION : vis.MIN_SEPARATION))
+          .stop()
+          .tick(600);
+
+        // Update the position to respect margins
+        vis.nodes.forEach(d => {
+            const [x, y] = vis.boundedPosition(d.x, d.y);
+            d.rendered_x = x;
+            d.rendered_y = y;
+        });
+
+        // Draw an arc from Boston to each other airport
+        let arcs = vis.svg.selectAll("path.arc")
+          .data(vis.nodes.filter(d => !vis.isBoston(d.iata)), d => d.iata)
+          .join("path")
+          .attr("class", "arc")
+          .transition(500)
+          .attr("d", d => {
+            const boston = vis.getBostonPositionInForceLayout();
+            const city = [d.rendered_x, d.rendered_y];
+            const dx = city[0] - boston[0];
+            const dy = city[1] - boston[1];
+            const dr = Math.sqrt(dx * dx + dy * dy);
+            const sweep = vis.isBoston(d.iata) ? 0 : 1;
+            return `M${boston[0]},${boston[1]}A${dr},${dr} 0 0,${sweep} ${city[0]},${city[1]}`;
+          })
+          .attr("fill", "none")
+          .attr("stroke", "lightgray")
+          .attr("stroke-width", 1);
+
+        // Create a group for each airport
+        let airportGroup = vis.svg.selectAll("g.airport")
+          .data(vis.nodes, d => d.iata)
+          .join("g")
+          .attr("class", "airport");
+
+        airportGroup.transition(500)
+          .attr("transform", d => `translate(${d.rendered_x}, ${d.rendered_y})`);
+        
+        // Add a circle for each airport
+        airportGroup.append("circle")
+              .on("mousemove", function(event, d) {
+                // Move the tooltip
+                const x = (event.pageX + 28);
+                const y = (event.pageY - 28);
+                vis.tooltip.style("opacity", .9);
+                vis.tooltip.html(vis.tooltipText(d.iata))
+                    .style("left", x + "px")
+                    .style("top", y + "px");
+                d3.select(this)
+                    .style("stroke", "black")
+                    .style("stroke-width", 2);
+            })
+            .on("mouseout", function(event, d) {
+                // Hide the tooltip
+                vis.tooltip.style("opacity", 0);
+                // Remove highlight
+                d3.select(this)
+                    .style("stroke", "none");
+            })
+            .attr("r", vis.NODE_SIZE)
+            .attr("fill", d => vis.isBoston(d.iata) ? "red" : "gray");
+        
+        // Add a name label for each airport
+        airportGroup.append("text")
+            .attr("x", 10)
+            .attr("y", 10)
+            .text(d => `${d.iata}`)
+            .attr("font-size", "10px")
+            .attr("fill", d => vis.isBoston(d.iata) ? "red" : "gray");
+        
+        // Add a fare label for each airport except for Boston
+        airportGroup.append("text")
+            .attr("x", 10)
+            .attr("y", 20)
+            .text(d => vis.isBoston(d.iata) ? '' : `$${vis.citiesWithinBudget[d.iata].toFixed(0)}`)
+            .attr("font-size", "10px")
+            .attr("fill", "gray");
       }
 }

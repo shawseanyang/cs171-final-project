@@ -16,7 +16,8 @@ class DaysPriorPriceVis {
     }
 
     getCheapestDayToBuy() {
-        return this.cheapestDayToBuy;
+        let msg = this.cheapestDayToBuy;
+        return `${msg} days`;
     }
 
     initVis(){

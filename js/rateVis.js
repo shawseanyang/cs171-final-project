@@ -24,11 +24,22 @@ class RateVis {
     }
 
     getVisFourText() {
-        text = "The average cost per mile for " + APPLICATION_STATE.selectedCity + " is $" + this.applicationStateTopPercentage.toFixed(2) + " per mile. "
+        d3.select
+        text = "On average, it costs The average cost per mile for " + APPLICATION_STATE.selectedCity + " is $" + this.applicationStateTopPercentage.toFixed(2) + " per mile. "
     }
 
     getBestValueDestination() {
         return this.bestValueDestination;
+    }
+
+    getAvgRatio() {
+        let msg = Number(this.averageRatio.toFixed(2));
+        return `\$${msg} per mile`;
+    }
+    
+    getCityRatio() {
+        let msg = Number(this.applicationStateRatio.toFixed(2));
+        return `\$${msg} per mile`;
     }
 
     createLineGenerator() {
@@ -99,6 +110,24 @@ class RateVis {
         // Init axes
         vis.xAxis = d3.axisBottom(vis.x);
         vis.yAxis = d3.axisLeft(vis.y);
+
+        // Add X-axis label
+        vis.svg.append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "end")
+            .attr("x", vis.width/2)
+            .attr("y", vis.height + 15)
+            .text("Average Fare ($)");
+
+        // Add Y-axis label
+        vis.svg.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".75em")
+            .attr("x", -20)
+            .text("Total Travel Distance (miles)");
         
         // Add X-axis group
         vis.svg.append("g")
@@ -127,10 +156,12 @@ class RateVis {
     wrangleData() {
         let vis = this;
     
-        // Initialize variables to track the best value destination
+        // Initialize variables to track the best value destination and total ratio
         let bestValueDestination = null;
         let highestRatio = 0;
-    
+        let totalRatioSum = 0;  // Variable to track the sum of all ratios
+        let destinationsCount = 0;  // Variable to count destinations with nonstop flights
+
         // Process data to group by destination and find the best value destination
         const processedData = d3.rollup(vis.data, 
             (v) => {
@@ -138,19 +169,23 @@ class RateVis {
                 const nonstopFlight = v.find(f => f.isNonStop);
                 if (nonstopFlight) {
                     const nonstopDistance = nonstopFlight.totalTravelDistance;
-    
+
                     // Calculate the average fare for each destination
                     const averageFare = d3.mean(v, f => f.totalFare);
         
                     // Calculate the ratio of distance to fare
                     const ratio = nonstopDistance / averageFare;
-        
+
                     // Update the best value destination if this ratio is higher
                     if (ratio > highestRatio) {
                         highestRatio = ratio;
                         bestValueDestination = nonstopFlight.destinationAirport;
                     }
-    
+
+                    // Add ratio to total sum and increment destination count
+                    totalRatioSum += ratio;
+                    destinationsCount++;
+
                     return {
                         totalTravelDistance: nonstopDistance,
                         averageFare: averageFare,
@@ -162,17 +197,20 @@ class RateVis {
             },
             d => d.destinationAirport // Grouping key is now only destination
         );
+
+        // Calculate the average ratio
+        vis.averageRatio = destinationsCount > 0 ? totalRatioSum / destinationsCount : 0;
+
     
         // Filter out entries where the value is undefined (i.e., no nonstop flights)
         vis.displayData = Array.from(processedData, ([destination, values]) => ({ destination, ...values }))
                             .filter(d => d.totalTravelDistance !== undefined);
     
         // Determine the ratio for the destination city from APPLICATION_STATE
-        console.log(APPLICATION_STATE.selectedCity, "calculating ratio")
-        let applicationStateRatio = vis.displayData.find(d => d.destination === APPLICATION_STATE.selectedCity)?.ratio;
-    
+        vis.applicationStateRatio = vis.displayData.find(d => d.destination === APPLICATION_STATE.selectedCity)?.ratio;
+
         // Calculate the percentage of ratios that are lower than the applicationStateRatio
-        let countLowerRatios = vis.displayData.filter(d => d.ratio < applicationStateRatio).length;
+        let countLowerRatios = vis.displayData.filter(d => d.ratio < this.applicationStateRatio).length;
         let percentage = 100 - (countLowerRatios / vis.displayData.length) * 100;
         let preposition = "top"
         let message = "Good choice!"

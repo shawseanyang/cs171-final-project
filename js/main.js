@@ -107,18 +107,29 @@ function initVis(dataArray){
         // Update title with cheapest destination
         d3.select('#vis4-title')
             .text(`${vis.getTitle()}`);
-        d3.select('#vis4-text')
-            .text('The cost per mile for '
-            )
+        d3.select('#vis4-avg-ratio')
+            .text(`${vis.getAvgRatio()}`)
+        d3.select('#vis4-city')
+            .text(`${APPLICATION_STATE.selectedCity}`)
+        d3.select('#vis4-city-price')
+            .text(`${vis.getCityRatio()}`)
+        d3.select('#vis4-best-city')
+            .text(`${vis.getBestValueDestination()}`)
     });
     vis1 = new DaysPriorPriceVis('vis1', dataArray[0], (vis) => {
         // Update title with the cheapest day to buy
         d3.select('#vis1-title')
-            .text(`Buy your ticket ${vis.getCheapestDayToBuy()} days before your flight!`);
+            .text(`Buy your ticket ${vis.getCheapestDayToBuy()} before your flight!`);
+        d3.select('#vis1-best-day')
+            .text(`${vis.getCheapestDayToBuy()}`)
     });
     vis2 = new AirlineCostVis('vis2', dataArray[0], (vis) => {
         d3.select('#vis2-title')
             .text(`Fly with ${vis.getCheapestAirline()}!`);
+        d3.select('#vis2-city')
+            .text(`${APPLICATION_STATE.selectedCity}`)
+        d3.select('#vis2-airline')
+            .text(`${vis.getCheapestAirline()}`)
     });
     vis3 = new CalendarVis('vis3', dataArray[0], (vis) => {
         // Update title with cheapest week

@@ -66,7 +66,7 @@ class RateVis {
 
         // Create a linear scale for mapping arrow lengths to colors with the adjusted domain
         const maxArrowLength = d3.max(vis.displayData, d => vis.y(m * d.averageFare + b) - vis.y(d.totalTravelDistance));
-        const maxDomainValue = maxArrowLength * 1.2; // You can adjust the factor (1.2) as needed
+        const maxDomainValue = maxArrowLength * 1.2; 
         const colorScale = d3.scaleSequential()
             .domain([0, maxDomainValue])
             .interpolator(d3.interpolateRdYlGn);
@@ -94,24 +94,22 @@ class RateVis {
         vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
         vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().width * 0.6 - vis.margin.top - vis.margin.bottom;
 
-        // init drawing area
         vis.svg = d3.select("#" + vis.parentElement).append("svg")
             .attr("width", vis.width + vis.margin.left + vis.margin.right)
             .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
             .append('g')
             .attr('transform', `translate(${vis.margin.left},${vis.margin.top})`);
 
-        // Init scales
+
         vis.x = d3.scaleLinear()
             .range([0, vis.width]);
         vis.y = d3.scaleLinear()
             .range([vis.height, 0]);
         
-        // Init axes
+  
         vis.xAxis = d3.axisBottom(vis.x);
         vis.yAxis = d3.axisLeft(vis.y);
 
-        // Add X-axis label
         vis.svg.append("text")
             .attr("class", "x label")
             .attr("text-anchor", "end")
@@ -119,7 +117,7 @@ class RateVis {
             .attr("y", vis.height + 30)
             .text("Average Fare ($)");
 
-        // Add Y-axis label
+  
         vis.svg.append("text")
             .attr("class", "y label")
             .attr("text-anchor", "end")
@@ -129,16 +127,15 @@ class RateVis {
             .attr("x", -vis.height / 2)
             .text("Total Travel Distance (miles)");
         
-        // Add X-axis group
+
         vis.svg.append("g")
             .attr("class", "x-axis axis")
             .attr('transform', `translate(${vis.margin.left}, ${vis.height})`);
 
-        // Add Y-axis group
+
         vis.svg.append("g")
             .attr("class", "y-axis axis");
-            
-        // init tooltip with a rounded white background
+
         vis.tooltip = d3.select("body").append("div")
             .attr("class", "tooltip")
             .style("font-weight", "bold")
@@ -156,33 +153,28 @@ class RateVis {
     wrangleData() {
         let vis = this;
     
-        // Initialize variables to track the best value destination and total ratio
+       
         let bestValueDestination = null;
         let highestRatio = 0;
-        let totalRatioSum = 0;  // Variable to track the sum of all ratios
-        let destinationsCount = 0;  // Variable to count destinations with nonstop flights
+        let totalRatioSum = 0;  s
+        let destinationsCount = 0; 
 
-        // Process data to group by destination and find the best value destination
+     
         const processedData = d3.rollup(vis.data, 
             (v) => {
-                // Find a nonstop flight for each destination
                 const nonstopFlight = v.find(f => f.isNonStop);
                 if (nonstopFlight) {
                     const nonstopDistance = nonstopFlight.totalTravelDistance;
 
-                    // Calculate the average fare for each destination
                     const averageFare = d3.mean(v, f => f.totalFare);
         
-                    // Calculate the ratio of distance to fare
                     const ratio = nonstopDistance / averageFare;
 
-                    // Update the best value destination if this ratio is higher
                     if (ratio > highestRatio) {
                         highestRatio = ratio;
                         bestValueDestination = nonstopFlight.destinationAirport;
                     }
 
-                    // Add ratio to total sum and increment destination count
                     totalRatioSum += ratio;
                     destinationsCount++;
 
@@ -192,13 +184,13 @@ class RateVis {
                         ratio: ratio
                     };
                 }
-                // Return undefined if there is no nonstop flight
+                
                 return undefined;
             },
             d => d.destinationAirport // Grouping key is now only destination
         );
 
-        // Calculate the average ratio
+    
         vis.averageRatio = destinationsCount > 0 ? totalRatioSum / destinationsCount : 0;
 
     
@@ -226,10 +218,10 @@ class RateVis {
             percentage = 100 - percentage;
         }
     
-        // Logging results
+        
         vis.msg = `${message} ${APPLICATION_STATE.selectedCity} is in the ${preposition} ${(100 - percentage).toFixed(2)}% of destinations in terms of cost per mile!`;
 
-        // Store the best value destination and the percentage in the instance for later use
+       
         vis.bestValueDestination = bestValueDestination;
         vis.applicationStateTopPercentage = 100 - percentage;
         
@@ -242,15 +234,14 @@ class RateVis {
     updateVis(){
         let vis = this;
     
-        // Update scales
+       
         vis.x.domain([0, d3.max(vis.displayData, d => d.averageFare)]);
         vis.y.domain([0, d3.max(vis.displayData, d => d.totalTravelDistance)]);
     
-        // Update axes
+       
         vis.svg.select(".x-axis").call(vis.xAxis);
         vis.svg.select(".y-axis").attr("transform", `translate(${vis.margin.left}, 0)`).call(vis.yAxis);
         
-        // Draw arrows to regression line
         vis.drawArrowsToRegressionLine();
 
         vis.svg.selectAll(".regression-arrow")
@@ -268,7 +259,6 @@ class RateVis {
                     .style("opacity", 0);
             });
 
-        // Draw circles for scatter plot
         let circles = vis.svg.selectAll("circle")
             .data(vis.displayData);
     
@@ -297,7 +287,6 @@ class RateVis {
     
         circles.exit().remove();
 
-        // Draw regression line
         const lineGenerator = vis.createLineGenerator();
         const lineData = [{ averageFare: d3.min(vis.displayData, d => d.averageFare)}, { averageFare: d3.max(vis.displayData, d => d.averageFare)}];
         

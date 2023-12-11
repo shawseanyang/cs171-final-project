@@ -11,7 +11,7 @@ class FareByDayVis {
 
     weekday(date) {
         if (date == null){
-            console.log("oh shit oh fuck")
+            console.log("oh GOD WHY ISNT THIS WOKRING")
             console.log(date)
         }
         return date.getDay();
@@ -20,13 +20,12 @@ class FareByDayVis {
     initVis() {
         let vis = this;
 
-        vis.margin = { top: 10, right: 15, bottom: 25, left: 35 }; // Increase the bottom margin as needed
+        vis.margin = { top: 10, right: 15, bottom: 25, left: 35 };
         vis.totalWidth = d3.select("#" + vis.parentElement).node().getBoundingClientRect().width || window.innerWidth;
         vis.width = vis.totalWidth - vis.margin.left - vis.margin.right;
     
         vis.height = 120 - vis.margin.top - vis.margin.bottom;
 
-        // Create SVG drawing area
         vis.svg = d3.select("#" + vis.parentElement).selectAll("svg")
             .data(d3.range(7))
             .enter().append("svg")
@@ -35,7 +34,6 @@ class FareByDayVis {
             .append("g")
             .attr("transform", "translate(" + vis.margin.left + "," + vis.margin.top + ")");
 
-        // Scales and axes
         vis.x = d3.scalePoint().range([0, vis.width / 7 - vis.margin.left - vis.margin.right]).padding(1);
         vis.y = d3.scaleLinear().range([vis.height, 0]);
 
@@ -44,7 +42,6 @@ class FareByDayVis {
         vis.svg.append("g")
             .attr("class", "y-axis axis")
             .call(vis.yAxis);
-                // Create a tooltip for hover-over information
         vis.tooltip = d3.select("body").append("div") 
             .attr("class", "tooltip")             
             .style("opacity", 0)
@@ -61,14 +58,12 @@ class FareByDayVis {
 
         vis.colorScale = d3.scaleSequential()
             .interpolator(d3.interpolateRdYlGn);
-        // Initialize data processing
         this.wrangleData();
     }
 
     wrangleData() {
         let vis = this;
 
-        // Convert date and filter data
         vis.filteredData = vis.data.filter(d => vis.parseDate(d.flightDate) != null).map(d => {
             d.flightDate = vis.parseDate(d.flightDate);
             if (d.flightDate == null){
@@ -122,14 +117,14 @@ class FareByDayVis {
             const dayData = vis.averageFares.find(d => d[0] === weekday);
             const airlineFares = dayData ? dayData[1] : [];
 
-            // Define domain for the airlines and update the y-axis domain
+       
             vis.x.domain(airlineFares.map(d => d[0]));
             vis.y.domain([0, d3.max(airlineFares, d => d[1])]);
 
-            // Update the y-axis
+          
             svg.select(".y-axis").call(vis.yAxis);
 
-            // Draw lines for average fare of each airline
+    
             airlineFares.forEach(function(airline) {
                 svg.append("line")
                     .attr("x1", vis.x(airline[0]))
@@ -163,7 +158,7 @@ class FareByDayVis {
             
             svg.append("text")
                 .attr("x", (vis.width / 7 - vis.margin.left - vis.margin.right) / 2)
-                .attr("y", vis.height + vis.margin.top + 10) // Adjust this value to position the labels correctly
+                .attr("y", vis.height + vis.margin.top + 10) 
                 .attr("text-anchor", "middle")
                 .attr("font-size", "10px")
                 .attr("font-weight", "bold")

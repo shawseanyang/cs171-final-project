@@ -9,7 +9,6 @@ class DaysPriorPriceVis {
         this.data = data;
         this.callback = callback;
 
-        // parse date method
         this.parseDate = function(input) {
           if (input instanceof Date) {
             return input;
@@ -31,20 +30,16 @@ class DaysPriorPriceVis {
         // Extract only the average fare values for the histogram
         const data = averagePriceData.map(d => d[1]);
     
-        // Set dimensions for the histogram
         const margin = { top: 10, right: 10, bottom: 20, left: 30 };
         const width = 200 - margin.left - margin.right;
         const height = 150 - margin.top - margin.bottom;
     
-        // Create a temporary SVG to draw the histogram
         let svgString = `<svg width="${width + margin.left + margin.right}" height="${height + margin.top + margin.bottom}"><g transform="translate(${margin.left},${margin.top})">`;
     
-        // Set the ranges for the histogram
         const x = d3.scaleLinear()
             .domain([d3.min(data), d3.max(data)])
             .range([0, width]);
     
-        // Set the parameters for the histogram
         const histogram = d3.histogram()
             .value(d => d)
             .domain(x.domain())
@@ -52,12 +47,12 @@ class DaysPriorPriceVis {
     
         const bins = histogram(data);
     
-        // Y axis: scale
+
         const y = d3.scaleLinear()
             .range([height, 0])
             .domain([0, d3.max(bins, d => d.length)]);
     
-        // Create bars
+
         bins.forEach(bin => {
             const xValue = x(bin.x0);
             const yValue = y(bin.length);
@@ -68,7 +63,7 @@ class DaysPriorPriceVis {
             svgString += `<rect x="${xValue}" y="${yValue}" width="${barWidth}" height="${barHeight}" fill="${fillColor}"></rect>`;
         });
     
-        // Close the SVG string
+
         svgString += '</g></svg>';
     
         return svgString;
@@ -82,14 +77,13 @@ class DaysPriorPriceVis {
         vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
         vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().width * 0.6 - vis.margin.top - vis.margin.bottom;
 
-        // init drawing area
         vis.svg = d3.select("#" + vis.parentElement).append("svg")
             .attr("width", vis.width + vis.margin.left + vis.margin.right)
             .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
             .append('g')
             .attr('transform', `translate (${vis.margin.left}, ${vis.margin.top})`);
 
-        // init scales
+
         vis.x = d3.scaleLinear()
             .range([vis.width, 0]);
         vis.y = d3.scaleLinear()
@@ -97,7 +91,7 @@ class DaysPriorPriceVis {
         vis.colorScale = d3.scaleSequential()
             .interpolator(d3.interpolateRdYlGn);
         
-        // init axes
+ 
         vis.xAxis = vis.svg.append("g")
             .attr("class", "axis axis--x")
             .attr("transform", `translate(0, ${vis.height})`);
@@ -106,7 +100,7 @@ class DaysPriorPriceVis {
             .attr("class", "axis axis--y")
             .attr("transform", `translate(${vis.width}, 0)`);
 
-        // draw axis labels
+
         vis.svg.append("text")
             .attr("class", "axis-label")
             .attr("transform", `translate(${vis.width / 2}, ${vis.height + 40})`)
@@ -122,7 +116,6 @@ class DaysPriorPriceVis {
             .text("Average Fare");
 
 
-        // init tooltip with a rounded white background
         vis.tooltip = d3.select("body").append("div")
             .attr("class", "tooltip")
             .style("font-weight", "bold")
@@ -160,7 +153,6 @@ class DaysPriorPriceVis {
             averagePriceByDaysPriorMap.set(i, average);
         });
 
-        // Turn into a sorted array
         vis.averagePriceByDaysPrior = [...averagePriceByDaysPriorMap.entries()].sort((a, b) => a[0] - b[0]);
 
         // Calculate the cheapest day to buy
@@ -172,16 +164,16 @@ class DaysPriorPriceVis {
     updateVis(){
         let vis = this;
 
-        // Update scales
+     
         vis.x.domain([0, d3.max(vis.averagePriceByDaysPrior, d => d[0])]);
         vis.y.domain([d3.min(vis.averagePriceByDaysPrior, d => d[1]) - 20, d3.max(vis.averagePriceByDaysPrior, d => d[1]) + 20]);
         vis.colorScale.domain([d3.max(vis.averagePriceByDaysPrior, d => d[1]), 0]);
 
-        // Update axes
+   
         vis.xAxis.transition().duration(800).call(d3.axisBottom(vis.x));
         vis.yAxis.transition().duration(800).call(d3.axisRight(vis.y));
 
-        // Draw the line
+    
         vis.svg.selectAll("path").remove();
         vis.svg.append("path")
             .datum(vis.averagePriceByDaysPrior)
@@ -193,7 +185,6 @@ class DaysPriorPriceVis {
                   .x(d => vis.x(d[0]))
                   .y(d => vis.y(d[1])));
 
-        // Draw circles
         vis.svg.selectAll("circle")
             .data(vis.averagePriceByDaysPrior, d => d[0])
             .join("circle")
@@ -223,7 +214,7 @@ class DaysPriorPriceVis {
             })
             .exit().remove();
 
-            // Call the callback function
+       
             vis.callback(vis);
     }
 }

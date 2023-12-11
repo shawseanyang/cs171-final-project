@@ -9,7 +9,6 @@ class AirlineCostVis {
         this.data = data;
         this.callback = callback;
 
-        // parse date method
         this.parseDate = d3.timeParse("%Y-%m-%d");
 
         this.initVis();
@@ -80,7 +79,6 @@ class AirlineCostVis {
         // Remove any entries that have null for the airline name after processing
         vis.filteredData = vis.filteredData.filter(d => d.segmentsAirlineName !== null);
     
-        // Aggregate data by airline name
         vis.averageCostByAirline = d3.rollup(
             vis.filteredData,
             flights => d3.mean(flights, flight => flight.totalFare),
@@ -89,7 +87,7 @@ class AirlineCostVis {
     
         // Convert the map to an array for easier processing and sort by average cost
         vis.averageCostArray = Array.from(vis.averageCostByAirline, ([segmentsAirlineName, averageCost]) => ({ segmentsAirlineName, averageCost }))
-            .sort((a, b) => b.averageCost - a.averageCost); // Sort descending
+            .sort((a, b) => b.averageCost - a.averageCost); 
     
 
         vis.colorScale.domain(
@@ -134,6 +132,5 @@ class AirlineCostVis {
             .attr('fill', d => vis.colorScale(d.averageCost));
 
         vis.callback(vis);
-        // Add labels or tooltips here if needed
     }
 }

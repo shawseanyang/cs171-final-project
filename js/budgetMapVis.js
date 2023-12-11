@@ -5,7 +5,6 @@
 
 class BudgetMapVis {
 
-    // CONSTANTS
     MIN_SEPARATION = 30;
     BOSTON_SEPARATION = 50;
     NODE_SIZE = 5;
@@ -15,13 +14,11 @@ class BudgetMapVis {
       this.data = data;
       this.airports = airports;
 
-      // parse date method
       this.parseDate = d3.timeParse("%Y-%m-%d");
 
       this.initVis();
     }
 
-    // Return the rendered position of Boston in the force layout
     getBostonPositionInForceLayout() {
       let vis = this;
       let boston = vis.nodes.filter(d => vis.isBoston(d.iata))[0];
@@ -32,27 +29,23 @@ class BudgetMapVis {
       return iata === "BOS";
     }
 
-    // Returns the position of a node bounded by the margins
     boundedPosition(x, y) {
         let vis = this;
         return [Math.max(vis.margin.left, Math.min(vis.width - vis.margin.right, x)), Math.max(vis.margin.top, Math.min(vis.height - vis.margin.bottom, y))];
     }
 
-    // Get the coordinates of a city given its IATA code
     getCoordinates(city_iata) {
         let vis = this;
         let airport = vis.airports.filter(d => d.iata === city_iata)[0];
         return [airport.longitude, airport.latitude];
     }
 
-    // Get the projected coordinates of a city given its IATA code
     getProjectedCoordinates(city_iata) {
         let vis = this;
         let coordinates = vis.getCoordinates(city_iata);
         return vis.projection(coordinates);
     }
 
-    // Text that tooltips should show given a data point
     tooltipText(d) {
         let vis = this;
         const iata = d;
@@ -65,7 +58,6 @@ class BudgetMapVis {
         }
     }
 
-    // Set up the date slider
     setupDateSlider() {
       let vis = this;
 
@@ -93,20 +85,16 @@ class BudgetMapVis {
               'min': timestamp(minDate),
               'max': timestamp(maxDate)
           },
-          // Steps of one day
           step: 24 * 60 * 60 * 1000,
           tooltips: [formatter, formatter]
       });
 
-      // attach an event listener to the slider
       slider.noUiSlider.on('end', function (values, handle) {
-        // convert timestamp to dates
         vis.dateRange = values.map(timestamp => new Date(Number(timestamp)));
         vis.filterData();
       });
     }
 
-    // Set up budget slider
     setupBudgetSlider() {
       let vis = this;
 
@@ -116,7 +104,6 @@ class BudgetMapVis {
 
       let formatter = { to: (str) => "$" + Math.floor(Number(str)) };
 
-      // Start budget as the median of totalFare
       let startingBudget = Math.floor(d3.median(this.data.map(d => d.totalFare === '' ? undefined : Math.ceil(Number(d.totalFare)))));
 
       vis.budget = startingBudget;
@@ -133,7 +120,6 @@ class BudgetMapVis {
           tooltips: [formatter]
       });
 
-      // attach an event listener to the slider
       slider.noUiSlider.on('end', function (values, handle) {
         vis.budget = values[handle];
         vis.filterData();
@@ -145,17 +131,14 @@ class BudgetMapVis {
 
         vis.margin = {top: 30, right: 30, bottom: 30, left: 30};
         vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
-        // 2/3 of width but apply the top and bottom margins.
         vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().width * 2 / 3 - vis.margin.top - vis.margin.bottom;
 
-        // init vis area
         vis.svg = d3.select("#" + vis.parentElement).append("svg")
             .attr("width", vis.width + vis.margin.left + vis.margin.right)
             .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
             .append('g')
             .attr('transform', `translate (${vis.margin.left}, ${vis.margin.top})`);
 
-        // light gray rectangle with rounded corners for the background
         vis.svg.append("rect")
             .attr("x", 0)
             .attr("y", 0)
@@ -165,7 +148,6 @@ class BudgetMapVis {
             .attr("rx", 10)
             .attr("ry", 10);
 
-        // Scales and axes for a map of the United States
         vis.projection = d3.geoAlbersUsa()
             .translate([vis.width / 2, vis.height / 2])
             .scale([1000]);
@@ -173,7 +155,6 @@ class BudgetMapVis {
         vis.path = d3.geoPath()
             .projection(vis.projection);
 
-        // init tooltip with a rounded white background
         vis.tooltip = d3.select("body").append("div")
             .attr("class", "tooltip")
             .style("font-weight", "bold")
@@ -184,7 +165,6 @@ class BudgetMapVis {
             .style("padding", "5px")
             .style("opacity", 0);
 
-        // Set up sliders
         vis.setupDateSlider();
         vis.setupBudgetSlider();
 
@@ -196,7 +176,6 @@ class BudgetMapVis {
 
         vis.cities = new Set(vis.data.map(d => d.destinationAirport));
 
-        // Remove the empty string
         vis.cities.delete("");
 
         vis.filterData();
@@ -234,7 +213,6 @@ class BudgetMapVis {
             iata: "BOS",
         });
 
-        // Restart the force layout
         vis.simulation = d3.forceSimulation(vis.nodes)
           .force('charge', d3.forceManyBody().strength(5))
           .force('x', d3.forceX().x(d => vis.getProjectedCoordinates(d.iata)[0]))
@@ -243,14 +221,12 @@ class BudgetMapVis {
           .stop()
           .tick(600);
 
-        // Update the position to respect margins
         vis.nodes.forEach(d => {
             const [x, y] = vis.boundedPosition(d.x, d.y);
             d.rendered_x = x;
             d.rendered_y = y;
         });
 
-        // Draw an arc from Boston to each other airport
         let arcs = vis.svg.selectAll("path.arc")
           .data(vis.nodes.filter(d => !vis.isBoston(d.iata)), d => d.iata)
           .join("path")
@@ -269,7 +245,6 @@ class BudgetMapVis {
           .attr("stroke", "lightgray")
           .attr("stroke-width", 1);
 
-        // Create a group for each airport
         let airportGroup = vis.svg.selectAll("g.airport")
           .data(vis.nodes, d => d.iata)
           .join("g")
@@ -278,10 +253,8 @@ class BudgetMapVis {
         airportGroup.transition(500)
           .attr("transform", d => `translate(${d.rendered_x}, ${d.rendered_y})`);
         
-        // Add a circle for each airport
         airportGroup.append("circle")
               .on("mousemove", function(event, d) {
-                // Move the tooltip
                 const x = (event.pageX + 28);
                 const y = (event.pageY - 28);
                 vis.tooltip.style("opacity", .9);
@@ -293,16 +266,13 @@ class BudgetMapVis {
                     .style("stroke-width", 2);
             })
             .on("mouseout", function(event, d) {
-                // Hide the tooltip
                 vis.tooltip.style("opacity", 0);
-                // Remove highlight
                 d3.select(this)
                     .style("stroke", "none");
             })
             .attr("r", vis.NODE_SIZE)
             .attr("fill", d => vis.isBoston(d.iata) ? "red" : "gray");
         
-        // Add a name label for each airport
         airportGroup.append("text")
             .attr("x", 10)
             .attr("y", 10)
@@ -310,7 +280,6 @@ class BudgetMapVis {
             .attr("font-size", "10px")
             .attr("fill", d => vis.isBoston(d.iata) ? "red" : "gray");
         
-        // Add a fare label for each airport except for Boston
         airportGroup.append("text")
             .attr("x", 10)
             .attr("y", 20)

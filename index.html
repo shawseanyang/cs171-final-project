@@ -19,12 +19,12 @@
   <span id="loader"><span id="loader-inner"></span></span>
   <img src = "assets/loadingAnimation.gif" alt = "Loading! Please wait">
 </div>
-<div class="container-fluid" style="height: 100vh; padding-top: 1vh">
+<div class="container-fluid mt-3" style="height: 100vh; padding-top: 1vh">
   <div class="container">
 		<div class = "row">
 			<div class="col-md-12">
         <div class="align-self-center" id="title">
-          <span class = "theme-color title-text"> Summer break is coming up! I'm flying from BOS to </span>
+          <span class = "title-text"> Summer break is coming up! I'm flying from BOS to </span>
           <div class="ui inline dropdown" id="city-select">
             <span class="title-text highlight-text" id = "dropdown-display"></span>
             <i class="dropdown icon"></i>
@@ -54,9 +54,9 @@
           <div id="vis4"></div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-4 d-flex align-items-center justify-content-center">
         <div class="align-self-center full" id="vis4-text-container">
-          <h3 id="vis4-title" class="theme-color"></h3>
+          <h3 id="vis4-title" class="vis-title"></h3>
           <span>On average, flights out of Boston cost </span>
           <span id="vis4-avg-ratio" class="highlight-text"></span><span>. </span>
           <span id="vis4-city"></span>
@@ -67,15 +67,15 @@
       </div>
 		</div>
     <div class = "row">
-			<div class="col-md-8">
-        <div class="align-self-center full" id="vis1-container"></div>
-        <div id="vis1"></div>
-      </div>
       <div class="col-md-4">
         <div class="align-self-center full" id="vis1-text-container"></div>
-        <h3 id="vis1-title" class="theme-color"></h3>
+        <h3 id="vis1-title" class="vis-title"></h3>
         <span>In general, it is better to buy tickets as early as possible. We see this same trend here, where it is cheapest to buy</span>
         <span id="vis1-best-day" class="highlight-text"></span><span> before the flight. However, prices are cyclical -- make sure you are buying the dip!</span>
+      </div>
+      <div class="col-md-8">
+        <div class="align-self-center full" id="vis1-container"></div>
+        <div id="vis1"></div>
       </div>
 		</div>
     <div class = "row">
@@ -84,23 +84,18 @@
           <div id="vis2"></div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-4 d-flex align-items-center justify-content-center">
         <div class="align-self-center full" id="vis2-text-container">
-          <h3 id="vis2-title" class="theme-color"></h3>
+          <h3 id="vis2-title" class="vis-title"></h3>
           <span>For flying to </span><span id="vis2-city" class="highlight-text"></span><span>, </span><span id="vis2-airline" class="highlight-text"></span><span> is the cheapest airline.</span>
         </div>
       </div>
     </div>
 		</div>
     <div class = "row">
-			<div class="col-md-8">
-        <div class="align-self-center full" id="vis3-container">
-          <div id="vis3"></div>
-        </div>
-      </div>
-      <div class="col-md-4">
+      <div class="col-md-4 d-flex align-items-center justify-content-center">
         <div class="align-self-center full" id="vis3-text-container">
-          <h3 id="vis3-title" class="theme-color"></h3>
+          <h3 id="vis3-title" class="vis-title"></h3>
           <span>In May, we often see prices go up later in the month. Why is this? Take a look at the academic calendars for these major Boston schools. </span>
           <span><br>Harvard:</span><span class="highlight-text"> May 11th</span>
           <span><br>Northeastern:</span><span class="highlight-text"> May 26th</span>
@@ -112,6 +107,11 @@
           <button class="ui button" id="vis3-button">Click to add commencement dates to the calendar!</button>
         </div>
       </div>
+      <div class="col-md-8">
+        <div class="align-self-center full" id="vis3-container">
+          <div id="vis3"></div>
+        </div>
+      </div>
 		</div>
     <div class = "row">
 			<div class="col-md-8">
@@ -119,9 +119,9 @@
           <div id="vis5"></div>
         </div>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-4 d-flex align-items-center justify-content-center">
         <div class="align-self-center full" id="vis5-text-container">
-          <h3 id="vis5-title" class="theme-color"></h3>
+          <h3 id="vis5-title" class="vis-title"></h3>
           <span id="vis5-text">Now that we know when in May to fly, what about which day of the week? Here is the best day of the week to fly!
              Be sure to mouse over the dots to determine which airline suits your preferred day of travel! </span>
         </div>
@@ -134,14 +134,14 @@
       </div>
       <div class="col-md-4">
         <div class="align-self-center full" id="vis6-text-container"></div>
-        <h3 id="vis6-title" class="theme-color"></h3>
+        <h3 id="vis6-title" class="vis-title"></h3>
         <span>You might think that flyign with layovers make flights cheaper. Wrong! If you are flying to </span><span id="vis6-bad-cities" class="highlight-text"></span><span>, it is cheaper to fly direct.</span>
         <span><br>On the other hand, if you are flying to </span><span id="vis6-best-city" class="highlight-text"></span><span>, consider flying with layovers -- you could save up to </span><span id="vis6-best-savings" class="highlight-text"></span><span>!</span>
       </div>
 		</div>
     <div class = "row">
 			<div class="col-md-12">
-        <h3 id="vis7-title" class="theme-color">So where are you gonna go?</h3>
+        <h3 id="vis7-title" class="vis-title">So where are you gonna go?</h3>
         <div class = "row">
           <div class="col-md-6">
             <h5>Date of Flight:</h4>

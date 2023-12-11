@@ -74,8 +74,20 @@
 .title-text{
   font-size: 42px;
   font-weight: bold;
+  color: #444444
+}
+
+.vis-title{
+  font-size: 24px;
+  font-weight: bold;
+  color: #555555
 }
 
 .highlight-text{
   color: #08ac4c;
+}
+
+span {
+  font-weight: bold;
+  color: #888888
 }

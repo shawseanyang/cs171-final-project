@@ -90,7 +90,7 @@ class RateVis {
     initVis(){
         let vis = this;
 
-        vis.margin = {top: 20, right: 20, bottom: 20, left: 20};
+        vis.margin = {top: 20, right: 20, bottom: 40, left: 40};
         vis.width = document.getElementById(vis.parentElement).getBoundingClientRect().width - vis.margin.left - vis.margin.right;
         vis.height = document.getElementById(vis.parentElement).getBoundingClientRect().width * 0.6 - vis.margin.top - vis.margin.bottom;
 
@@ -115,8 +115,8 @@ class RateVis {
         vis.svg.append("text")
             .attr("class", "x label")
             .attr("text-anchor", "end")
-            .attr("x", vis.width/2)
-            .attr("y", vis.height + 15)
+            .attr("x", vis.width / 2)
+            .attr("y", vis.height + 30)
             .text("Average Fare ($)");
 
         // Add Y-axis label
@@ -124,9 +124,9 @@ class RateVis {
             .attr("class", "y label")
             .attr("text-anchor", "end")
             .attr("transform", "rotate(-90)")
-            .attr("y", 6)
+            .attr("y", -vis.margin.left + 10)
             .attr("dy", ".75em")
-            .attr("x", -20)
+            .attr("x", -vis.height / 2)
             .text("Total Travel Distance (miles)");
         
         // Add X-axis group

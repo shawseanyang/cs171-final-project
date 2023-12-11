@@ -159,8 +159,8 @@ class BudgetMapVis {
         vis.svg.append("rect")
             .attr("x", 0)
             .attr("y", 0)
-            .attr("width", vis.width)
-            .attr("height", vis.height)
+            .attr("width", document.getElementById(vis.parentElement).getBoundingClientRect().width)
+            .attr("height", document.getElementById(vis.parentElement).getBoundingClientRect().height)
             .attr("fill", "#eee")
             .attr("rx", 10)
             .attr("ry", 10);

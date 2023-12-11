@@ -91,3 +91,18 @@ span {
   font-weight: bold;
   color: #888888
 }
+
+/* Button */
+.highlight-red-text{
+  color: #EF4040
+}
+
+.commencement-dates {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  display: inline;
+}
+
+.visible {
+  opacity: 1;
+}

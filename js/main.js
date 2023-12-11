@@ -146,7 +146,6 @@ function showLoadingScreen() {
     loadingScreen.style.opacity = '1';
 }
 
-
 function hideLoadingScreen() {
     const loadingScreen = document.getElementById('loader-wrapper');
     loadingScreen.style.opacity = '0';

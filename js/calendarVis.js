@@ -8,6 +8,7 @@
         constructor(parentElement, data, callback) {
         this.parentElement = parentElement;
         this.data = data;
+        this.dateIcons = [];
         this.callback = callback;
 
         // parse date method
@@ -96,6 +97,19 @@
                 .style("color", "white")
                 .style("padding", "5px")
                 .style("opacity", 0);
+
+            // Add button event listener here
+            let button = document.getElementById('vis3-button');
+            if (button) {
+                button.addEventListener('click', function() {
+                    const elements = document.querySelectorAll('.commencement-dates');
+                    elements.forEach(el => {
+                        el.classList.add('visible');
+                    });
+                });
+            } else {
+                console.error('Button #vis3-button not found');
+            }
 
             this.wrangleData();
         }
